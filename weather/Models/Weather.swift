@@ -15,6 +15,8 @@ enum WeatherType {
 
 class Weather : Object {
     @objc dynamic var temp = 0.0
+    @objc dynamic var minTemp = 0.0
+    @objc dynamic var maxTemp = 0.0
     @objc dynamic var sunset: Date?
     @objc dynamic var sunrise: Date?
     @objc dynamic var clouds = 0.0
@@ -22,11 +24,14 @@ class Weather : Object {
     @objc dynamic var date: Date?
     @objc dynamic var precip = 0.0
     @objc dynamic var city = ""
+    @objc dynamic var createAt: Date?
     
     static func fromJson(json: [String: Any], city: String = "") -> Weather {
         let weather = Weather()
         
         weather.temp = json["temp"] as! Double
+        weather.minTemp = json["min_temp"] as! Double
+        weather.maxTemp = json["max_temp"] as! Double
         weather.sunset = Date(timeIntervalSince1970: json["sunset_ts"] as! Double)
         weather.sunrise = Date(timeIntervalSince1970: json["sunrise_ts"] as! Double)
         weather.clouds = json["clouds"] as! Double
@@ -34,6 +39,7 @@ class Weather : Object {
         weather.date = Weather.dateFormat(json["datetime"] as? String)
         weather.precip = json["precip"] as! Double
         weather.city = city
+        weather.createAt = Date()
         
         return weather
     }
@@ -63,5 +69,24 @@ class Weather : Object {
         default:
             return WeatherType.Unknown
         }
+    }
+    
+    var tempString: String {
+        let intTemp: Int = Int(exactly:(self.temp).rounded())!
+        return String(intTemp)
+    }
+    
+    var minTempString: String {
+        let intTemp: Int = Int(exactly:(self.minTemp).rounded())!
+        return String(intTemp)
+    }
+    
+    var maxTempString: String {
+        let intTemp: Int = Int(exactly:(self.maxTemp).rounded())!
+        return String(intTemp)
+    }
+    
+    var dayTemp: String {
+        return "\(self.maxTemp)° / °\(self.minTemp)"
     }
 }

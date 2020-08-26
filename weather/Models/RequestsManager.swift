@@ -10,8 +10,9 @@ import Foundation
 import Alamofire
 
 class RequestManager : NSObject {
-    private static let requestUrl: String = "https://api.weatherbit.io/v2.0/forecast/daily"
-    
+    static let dailyForecast: String = "https://api.weatherbit.io/v2.0/forecast/daily"
+    static let currentForrecast: String = "https://api.weatherbit.io/v2.0/current"
+
     
     static func formatParams(dict: [String: Any?], withKey: Bool = true) -> String {
         var params: String = ""
@@ -40,8 +41,8 @@ class RequestManager : NSObject {
     }
     
     
-    static func makeRequest(params: String, closureBloack: @escaping ([String: AnyObject]) -> ()) {
-        AF.request(self.requestUrl + params).responseJSON { (response) in
+    static func makeRequest(url: String, closureBloack: @escaping ([String: AnyObject]) -> ()) {
+        AF.request(url).responseJSON { (response) in
             switch response.result {
             case .success(let value):
                 closureBloack(value as! [String: AnyObject])
