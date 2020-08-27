@@ -31,6 +31,7 @@ extension Date {
 }
 
 class ViewController: UIViewController, CLLocationManagerDelegate {
+    let maxWeatherListCount: Int = 3
     var realm: Realm!
     var locationManager: CLLocationManager!
     var weatherList: Results<Weather>!
@@ -44,12 +45,11 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        let configuration = Realm.Configuration(schemaVersion: 3)
+        let configuration = Realm.Configuration(schemaVersion: 5)
         self.realm = try! Realm(configuration: configuration)
 
         let date: Date = Date()
-        self.timeLabel.text = date.getFormattedDate(format: "d E, h:mm a")
+        self.timeLabel.text = date.getFormattedDate(format: "d E, h:mm a").uppercased()
         
         locationManager = CLLocationManager()
         locationManager.delegate = self
@@ -71,38 +71,47 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
                 let placemark = placemarks![0]
                 
                 if placemark.locality != nil && !placemark.locality!.isEmpty {
-                    self.locationLabel.text = placemark.locality!
-                    self.fetchData(placemark.locality!)
-                    
+                    self.locationLabel.text = placemark.locality!.uppercased()
+                    self.fetchCurrentData(placemark.locality!)
+                    self.fetchWeatherList(placemark.locality!)
+
                     self.fetchCurrentWeather(lat: userLocation.coordinate.latitude, lon: userLocation.coordinate.longitude)
                 }
             }
         }
     }
     
-    func fetchData(_ city: String) {
-        let predicate = NSPredicate(format: "date >=  %@ and city == %@", Date().daysdelta(1)! as NSDate, city)
-        self.weatherList = self.realm.objects(Weather.self).filter(predicate).sorted(byKeyPath: "date")
-        
+    func fetchCurrentData(_ city: String) {
         let currentPredicate = NSPredicate(format: "createAt <= %@ and city == %@", Date().hoursDelta(6)! as NSDate, city)
-        self.currentWeather = self.realm.objects(Weather.self).filter(currentPredicate)
+        self.currentWeather = self.realm.objects(Weather.self).filter(currentPredicate).sorted(byKeyPath: "createAt")
+        
+        guard self.currentWeather.count != 0 else {
+            return
+        }
+        self.tempLabel.text = self.currentWeather[0].tempString
+    }
+    
+    func fetchWeatherList(_ city: String) {
+        let predicate = NSPredicate(format: "date >  %@ and city == %@", Date() as NSDate, city)
+        self.weatherList = self.realm.objects(Weather.self).filter(predicate).sorted(byKeyPath: "date").distinct(by: ["date"])
+        self.weatherTableView.reloadData()
     }
     
     func fetchCurrentWeather(lat: Double, lon: Double) {
         var paramsDict: [String: Any] = ["lat" : lat, "lon": lon]
-        var city: String?
 
-        if self.weatherList.count < 4 {
+        if self.weatherList.count < self.maxWeatherListCount {
             let params: String = RequestManager.formatParams(dict: paramsDict)
-            
-            RequestManager.makeRequest(url: RequestManager.currentForrecast + params, closureBloack: { (response) in
-                city = response["city_name"] as? String
+            RequestManager.makeRequest(url: RequestManager.dailyForecast + params, closureBloack: { (response) in
+                let city = response["city_name"] as! String
+
                 for data in response["data"] as! [AnyObject] {
-                    let weather: Weather = Weather.fromJson(json: data as! [String: Any], city: city!)
+                    let weather: Weather = Weather.forecastFromJson(json: data as! [String: Any], city: city)
                     try! self.realm.write {
                         self.realm.add(weather)
                     }
                 }
+                self.fetchWeatherList(city)
             })
         }
         
@@ -110,32 +119,32 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
             paramsDict["days"] = 16
             let params: String = RequestManager.formatParams(dict: paramsDict)
 
-            RequestManager.makeRequest(url: RequestManager.dailyForecast + params, closureBloack: { (response) in
-                city = response["city_name"] as? String
-
+            RequestManager.makeRequest(url: RequestManager.currentForrecast + params, closureBloack: { (response) in
+                var city: String?
+                
                 for data in response["data"] as! [AnyObject] {
-                    let weather: Weather = Weather.fromJson(json: data as! [String: Any], city: city!)
+                    city = data["city_name"] as? String
+                    let weather: Weather = Weather.currentFromJson(json: data as! [String: Any], city: city!)
                     try! self.realm.write {
                         self.realm.add(weather)
                     }
                 }
+                self.fetchCurrentData(city!)
             })
         }
-//        self.fetchData(city!)
-//        self.tempLabel.text = self.currentWeather[0].tempString
     }
 }
 
 extension ViewController : UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "WeatherCell") as! WeatherCell
-        cell.dayLable.text = self.weatherList[indexPath.row].date!.getFormattedDate(format: "E")
+        cell.dayLable.text = self.weatherList[indexPath.row].date!.getFormattedDate(format: "E").uppercased()
         cell.weatherLabel.text = weatherList[indexPath.row].dayTemp
-        return UITableViewCell()
+        return cell
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return self.weatherList?.count ?? 0 > 3 ? 3 : self.weatherList?.count ?? 0
+        return self.weatherList?.count ?? 0 > self.maxWeatherListCount ? self.maxWeatherListCount : self.weatherList?.count ?? 0
     }
 }
 

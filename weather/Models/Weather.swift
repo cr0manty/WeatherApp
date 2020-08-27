@@ -15,8 +15,6 @@ enum WeatherType {
 
 class Weather : Object {
     @objc dynamic var temp = 0.0
-    @objc dynamic var minTemp = 0.0
-    @objc dynamic var maxTemp = 0.0
     @objc dynamic var sunset: Date?
     @objc dynamic var sunrise: Date?
     @objc dynamic var clouds = 0.0
@@ -25,17 +23,15 @@ class Weather : Object {
     @objc dynamic var precip = 0.0
     @objc dynamic var city = ""
     @objc dynamic var createAt: Date?
+    var minTemp = RealmOptional<Double>()
+    var maxTemp = RealmOptional<Double>()
     
-    static func fromJson(json: [String: Any], city: String = "") -> Weather {
+    private static func fromJson(json: [String: Any], city: String) -> Weather {
         let weather = Weather()
+        print(json)
         
         weather.temp = json["temp"] as! Double
-        weather.minTemp = json["min_temp"] as! Double
-        weather.maxTemp = json["max_temp"] as! Double
-        weather.sunset = Date(timeIntervalSince1970: json["sunset_ts"] as! Double)
-        weather.sunrise = Date(timeIntervalSince1970: json["sunrise_ts"] as! Double)
         weather.clouds = json["clouds"] as! Double
-        weather.type = (json["weather"] as! [String: Any])["code"] as! Int
         weather.date = Weather.dateFormat(json["datetime"] as? String)
         weather.precip = json["precip"] as! Double
         weather.city = city
@@ -44,9 +40,37 @@ class Weather : Object {
         return weather
     }
     
+    static func forecastFromJson(json: [String: Any], city: String) -> Weather {
+        let weather = self.fromJson(json: json, city: city)
+        
+        weather.minTemp = RealmOptional<Double>(json["min_temp"] as? Double)
+        weather.maxTemp = RealmOptional<Double>(json["max_temp"] as? Double)
+        weather.sunset =  Date(timeIntervalSince1970: json["sunset_ts"] as! Double)
+        weather.sunrise = Date(timeIntervalSince1970: json["sunrise_ts"] as! Double)
+        weather.type = (json["weather"] as! [String: Any])["code"] as! Int
+
+        return weather
+    }
+    
+    static func currentFromJson(json: [String: Any], city: String) -> Weather {
+        let weather = self.fromJson(json: json, city: city)
+        
+        weather.sunrise = self.parseTime(time: json["sunrise"] as! String)
+        weather.sunset = self.parseTime(time: json["sunset"] as! String)
+        let typeStr = (json["weather"] as! [String: Any])["code"] as! String
+        weather.type = Int(typeStr)!
+
+        return weather
+    }
+    
+    static func parseTime(time: String, date: Date = Date()) -> Date {
+        let timeArr: [Int] = time.split { $0 == ":" } .map { (x) -> Int in return Int(String(x))! }
+        return Calendar.current.date(bySettingHour: timeArr[0], minute: timeArr[1], second: 0, of: date)!
+    }
+    
     static func dateFormat(_ value: String?) -> Date?{
         let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "yyyy'-'MM'-'dd'"
+        dateFormatter.dateFormat = "yyyy-MM-dd"
         return dateFormatter.date(from: value!)
     }
     
@@ -71,22 +95,24 @@ class Weather : Object {
         }
     }
     
-    var tempString: String {
-        let intTemp: Int = Int(exactly:(self.temp).rounded())!
+    private func doubleToIntString(_ value: Double) -> String{
+        let intTemp: Int = Int(exactly:(value).rounded())!
         return String(intTemp)
+    }
+    
+    var tempString: String {
+        return self.doubleToIntString(self.temp)
     }
     
     var minTempString: String {
-        let intTemp: Int = Int(exactly:(self.minTemp).rounded())!
-        return String(intTemp)
+        return self.doubleToIntString(self.minTemp.value!)
     }
     
     var maxTempString: String {
-        let intTemp: Int = Int(exactly:(self.maxTemp).rounded())!
-        return String(intTemp)
+        return self.doubleToIntString(self.maxTemp.value!)
     }
     
     var dayTemp: String {
-        return "\(self.maxTemp)° / °\(self.minTemp)"
+        return "\(self.maxTempString)° / \(self.minTempString)°"
     }
 }
