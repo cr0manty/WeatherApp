@@ -36,20 +36,31 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
     var locationManager: CLLocationManager!
     var weatherList: Results<Weather>!
     var currentWeather: Results<Weather>!
-
+    var timer: Timer?
+    
     @IBOutlet weak var tempLabel: UILabel!
     @IBOutlet weak var timeLabel: UILabel!
     @IBOutlet weak var locationLabel: UILabel!
     @IBOutlet weak var temperatureLabel: UILabel!
     @IBOutlet weak var weatherTableView: UITableView!
+    @IBOutlet weak var animatiomView: UIView!
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        setNeedsStatusBarAppearanceUpdate()
+    }
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        .lightContent
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         let configuration = Realm.Configuration(schemaVersion: 5)
         self.realm = try! Realm(configuration: configuration)
 
         let date: Date = Date()
-        self.timeLabel.text = date.getFormattedDate(format: "d E, h:mm a").uppercased()
+        self.timeLabel.text = date.getFormattedDate(format: "d E, ha").uppercased()
         
         locationManager = CLLocationManager()
         locationManager.delegate = self
@@ -74,7 +85,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
                     self.locationLabel.text = placemark.locality!.uppercased()
                     self.fetchCurrentData(placemark.locality!)
                     self.fetchWeatherList(placemark.locality!)
-
+                    
                     self.fetchCurrentWeather(lat: userLocation.coordinate.latitude, lon: userLocation.coordinate.longitude)
                 }
             }
@@ -89,6 +100,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
             return
         }
         self.tempLabel.text = self.currentWeather[0].tempString
+        self.view.setNeedsDisplay()
     }
     
     func fetchWeatherList(_ city: String) {
@@ -99,12 +111,12 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
     
     func fetchCurrentWeather(lat: Double, lon: Double) {
         var paramsDict: [String: Any] = ["lat" : lat, "lon": lon]
-
+        
         if self.weatherList.count < self.maxWeatherListCount {
             let params: String = RequestManager.formatParams(dict: paramsDict)
             RequestManager.makeRequest(url: RequestManager.dailyForecast + params, closureBloack: { (response) in
                 let city = response["city_name"] as! String
-
+                
                 for data in response["data"] as! [AnyObject] {
                     let weather: Weather = Weather.forecastFromJson(json: data as! [String: Any], city: city)
                     try! self.realm.write {
@@ -118,7 +130,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
         if self.currentWeather.count == 0 {
             paramsDict["days"] = 16
             let params: String = RequestManager.formatParams(dict: paramsDict)
-
+            
             RequestManager.makeRequest(url: RequestManager.currentForrecast + params, closureBloack: { (response) in
                 var city: String?
                 

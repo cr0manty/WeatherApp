@@ -16,6 +16,9 @@
 		50946BAA24F3FA8D00C49F5F /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 50946BA824F3FA8D00C49F5F /* LaunchScreen.storyboard */; };
 		50946BB824F41B2700C49F5F /* Weather.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50946BB724F41B2700C49F5F /* Weather.swift */; };
 		50946BBA24F41B5C00C49F5F /* RequestsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50946BB924F41B5C00C49F5F /* RequestsManager.swift */; };
+		50B3923024F85C3700EB80E7 /* Pulse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50B3922F24F85C3700EB80E7 /* Pulse.swift */; };
+		50C118E124FD36AC002EA794 /* SunnyWeather.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50C118E024FD36AC002EA794 /* SunnyWeather.swift */; };
+		50E7E11924FE7DEF00E02CBF /* MoonWeather.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50E7E11824FE7DEF00E02CBF /* MoonWeather.swift */; };
 		50ECEDEE24F7093E009DFD79 /* WeatherCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 50ECEDED24F7093E009DFD79 /* WeatherCell.swift */; };
 /* End PBXBuildFile section */
 
@@ -33,6 +36,9 @@
 		50946BB724F41B2700C49F5F /* Weather.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Weather.swift; sourceTree = "<group>"; };
 		50946BB924F41B5C00C49F5F /* RequestsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RequestsManager.swift; sourceTree = "<group>"; };
 		50946BBB24F453BE00C49F5F /* Alamofire.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Alamofire.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		50B3922F24F85C3700EB80E7 /* Pulse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Pulse.swift; sourceTree = "<group>"; };
+		50C118E024FD36AC002EA794 /* SunnyWeather.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SunnyWeather.swift; sourceTree = "<group>"; };
+		50E7E11824FE7DEF00E02CBF /* MoonWeather.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoonWeather.swift; sourceTree = "<group>"; };
 		50ECEDED24F7093E009DFD79 /* WeatherCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherCell.swift; sourceTree = "<group>"; };
 		7A8D603A997415479002803F /* Pods-weather.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-weather.release.xcconfig"; path = "Target Support Files/Pods-weather/Pods-weather.release.xcconfig"; sourceTree = "<group>"; };
 		E18DFF76DCE8931359F8F727 /* Pods_weather.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_weather.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -50,6 +56,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		5026262024FD5970002F6648 /* Animation */ = {
+			isa = PBXGroup;
+			children = (
+				50B3922F24F85C3700EB80E7 /* Pulse.swift */,
+			);
+			path = Animation;
+			sourceTree = "<group>";
+		};
 		50946B9124F3FA8B00C49F5F = {
 			isa = PBXGroup;
 			children = (
@@ -94,6 +108,7 @@
 		50946BB224F3FABD00C49F5F /* Screens */ = {
 			isa = PBXGroup;
 			children = (
+				50B3922E24F85C0E00EB80E7 /* WeatherContent */,
 				50946BA124F3FA8B00C49F5F /* ViewController.swift */,
 			);
 			path = Screens;
@@ -115,6 +130,16 @@
 				50946B9F24F3FA8B00C49F5F /* SceneDelegate.swift */,
 			);
 			path = Utils;
+			sourceTree = "<group>";
+		};
+		50B3922E24F85C0E00EB80E7 /* WeatherContent */ = {
+			isa = PBXGroup;
+			children = (
+				5026262024FD5970002F6648 /* Animation */,
+				50C118E024FD36AC002EA794 /* SunnyWeather.swift */,
+				50E7E11824FE7DEF00E02CBF /* MoonWeather.swift */,
+			);
+			path = WeatherContent;
 			sourceTree = "<group>";
 		};
 		50ECEDEC24F7090C009DFD79 /* Widgets */ = {
@@ -260,7 +285,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				50946BB824F41B2700C49F5F /* Weather.swift in Sources */,
+				50E7E11924FE7DEF00E02CBF /* MoonWeather.swift in Sources */,
+				50C118E124FD36AC002EA794 /* SunnyWeather.swift in Sources */,
 				50946BBA24F41B5C00C49F5F /* RequestsManager.swift in Sources */,
+				50B3923024F85C3700EB80E7 /* Pulse.swift in Sources */,
 				50ECEDEE24F7093E009DFD79 /* WeatherCell.swift in Sources */,
 				50946BA224F3FA8B00C49F5F /* ViewController.swift in Sources */,
 				50946B9E24F3FA8B00C49F5F /* AppDelegate.swift in Sources */,

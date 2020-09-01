@@ -27,14 +27,8 @@
                                 <color key="textColor" white="0.60518336187214605" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="--" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="20" adjustsFontForContentSizeCategory="YES" translatesAutoresizingMaskIntoConstraints="NO" id="y0z-Kv-aQW">
-                                <rect key="frame" x="40" y="170" width="334" height="298.5"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="250"/>
-                                <color key="textColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" alwaysBounceVertical="YES" scrollEnabled="NO" delaysContentTouches="NO" canCancelContentTouches="NO" dataMode="prototypes" style="plain" separatorStyle="none" allowsSelection="NO" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="QMJ-kY-RSz">
-                                <rect key="frame" x="87" y="448" width="240" height="128"/>
+                                <rect key="frame" x="87" y="491" width="240" height="128"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <color key="backgroundColor" red="0.13333570959999999" green="0.133329004" blue="0.1333335638" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                                 <color key="sectionIndexColor" white="0.40658889840000001" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
@@ -81,22 +75,34 @@
                                     <outlet property="delegate" destination="BYZ-38-t0r" id="X8f-pJ-Knb"/>
                                 </connections>
                             </tableView>
+                            <view contentMode="scaleAspectFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="vUy-M3-jQS" customClass="MoonWeather" customModule="weather" customModuleProvider="target">
+                                <rect key="frame" x="20" y="138" width="374" height="345"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES"/>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <edgeInsets key="layoutMargins" top="8" left="8" bottom="8" right="8"/>
+                            </view>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="center" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" text="--" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="20" adjustsFontForContentSizeCategory="YES" translatesAutoresizingMaskIntoConstraints="NO" id="y0z-Kv-aQW">
+                                <rect key="frame" x="28" y="172" width="358" height="271"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES"/>
+                                <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="250"/>
+                                <color key="textColor" red="0.078431372549019607" green="0.078431372549019607" blue="0.078431372549019607" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <color key="backgroundColor" white="0.13296411244292236" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="MD8-BP-jeI" secondAttribute="trailing" constant="20" id="0oq-L4-Hhm"/>
                             <constraint firstItem="MD8-BP-jeI" firstAttribute="top" secondItem="kq7-M9-YSF" secondAttribute="bottom" constant="8" id="1J6-fT-MTt"/>
-                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="y0z-Kv-aQW" secondAttribute="trailing" constant="40" id="3Ij-Qy-2T5"/>
-                            <constraint firstItem="y0z-Kv-aQW" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="40" id="6Ol-N1-D2p"/>
                             <constraint firstItem="kq7-M9-YSF" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="30" id="6hU-wj-Ifq"/>
                             <constraint firstItem="MD8-BP-jeI" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="20" id="EdL-jT-Cvu"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="kq7-M9-YSF" secondAttribute="trailing" constant="20" id="Lsg-dg-mOw"/>
                             <constraint firstItem="kq7-M9-YSF" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="20" id="OXu-Is-nmh"/>
-                            <constraint firstItem="y0z-Kv-aQW" firstAttribute="top" secondItem="MD8-BP-jeI" secondAttribute="bottom" constant="40" id="QcT-i7-Zj8"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                     </view>
                     <connections>
+                        <outlet property="animatiomView" destination="vUy-M3-jQS" id="BF9-fS-DyI"/>
                         <outlet property="locationLabel" destination="kq7-M9-YSF" id="61d-i0-ZkU"/>
                         <outlet property="tempLabel" destination="y0z-Kv-aQW" id="lPA-1m-qNG"/>
                         <outlet property="temperatureLabel" destination="y0z-Kv-aQW" id="Kz6-jn-GWe"/>
