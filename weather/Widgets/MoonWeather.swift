@@ -30,14 +30,19 @@ class MoonWeather: SunnyWeather {
         self.addStars()
     }
     
+    func randomInRange(low: Int, high: Int) -> Int {
+        return low + Int(arc4random_uniform(UInt32(high - low + 1)))
+    }
+    
     func addStars() {
         let starAmount: Int = Int.random(in: 5...20)
         
         for _ in 0...starAmount {
-            let x: CGFloat = self.frame.size.width * CGFloat((arc4random_uniform(100) / 100))
-            let y: CGFloat = self.frame.size.height * CGFloat((arc4random_uniform(100) / 100))
+            let x = self.randomInRange(low: Int(self.frame.minX), high: Int(self.frame.maxX))
+            let y = self.randomInRange(low: Int(self.frame.minY), high: Int(self.frame.midY))
+            let size = self.randomInRange(low: 5, high: 12)
             
-            let star: UIView! = UIView(frame: CGRect(x: x, y: y, width: 10, height: 10))
+            let star: UIView! = UIView(frame: CGRect(x: x, y: y, width: size, height: size))
             star.backgroundColor = UIColor(red: 219/255, green: 217/255, blue: 231/255, alpha: 1)
             star.layer.cornerRadius = 5
             self.insertSubview(star, belowSubview: self.lastCircle)
@@ -46,7 +51,8 @@ class MoonWeather: SunnyWeather {
     
     func addMoonCrater() {
         for _ in 0...4 {
-            let arc: Double = Double.random(in: 0...50)
+            let arc:  Double = Double(self.randomInRange(low: Int(self.centerCircle.frame.minX), high: Int(self.centerCircle.frame.maxX)))
+            
             let x: CGFloat = CGFloat(25 * cos(arc))
             let y: CGFloat = CGFloat(25 * sin(arc))
             

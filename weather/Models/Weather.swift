@@ -10,7 +10,8 @@ import Foundation
 import RealmSwift
 
 enum WeatherType {
-    case Thunderstorm, Drizzle, Rain, Snow, Mist, Clouds, Clear, Unknown
+    case Thunderstorm, Drizzle, Rain, Snow, Mist, Clouds, ClearDay,
+    ClearNight, PartialCloudsDay, PartialCloudsNight, Unknown
 }
 
 class Weather : Object {
@@ -47,8 +48,14 @@ class Weather : Object {
         weather.maxTemp = RealmOptional<Double>(json["max_temp"] as? Double)
         weather.sunset =  Date(timeIntervalSince1970: json["sunset_ts"] as! Double)
         weather.sunrise = Date(timeIntervalSince1970: json["sunrise_ts"] as! Double)
-        weather.type = (json["weather"] as! [String: Any])["code"] as! Int
-
+        
+        do {
+            weather.type = try (json["weather"] as! [String: Any])["code"] as! Int
+        } catch {
+            let typeStr = (json["weather"] as! [String: Any])["code"] as! String
+            weather.type = Int(typeStr)!
+        }
+        
         return weather
     }
     
@@ -57,9 +64,14 @@ class Weather : Object {
         
         weather.sunrise = self.parseTime(time: json["sunrise"] as! String)
         weather.sunset = self.parseTime(time: json["sunset"] as! String)
-        let typeStr = (json["weather"] as! [String: Any])["code"] as! String
-        weather.type = Int(typeStr)!
-
+        
+        do {
+            weather.type = try (json["weather"] as! [String: Any])["code"] as! Int
+        } catch {
+            let typeStr = (json["weather"] as! [String: Any])["code"] as! String
+            weather.type = Int(typeStr)!
+        }
+        
         return weather
     }
     
@@ -75,6 +87,8 @@ class Weather : Object {
     }
     
     var weatherType: WeatherType {
+        let now: Date = Date()
+        
         switch type {
         case 200...299:
             return WeatherType.Thunderstorm
@@ -87,8 +101,10 @@ class Weather : Object {
         case 700...799:
             return WeatherType.Mist
         case 800:
-            return WeatherType.Clear
-        case 801...899:
+            return self.sunset! < now && now < self.sunrise! ? WeatherType.ClearNight : WeatherType.ClearDay
+        case 801...803:
+            return self.sunset! < now && now < self.sunrise! ? WeatherType.PartialCloudsNight : WeatherType.PartialCloudsDay
+        case 804...899:
             return WeatherType.Clouds
         default:
             return WeatherType.Unknown

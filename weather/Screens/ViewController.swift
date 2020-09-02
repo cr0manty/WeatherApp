@@ -37,6 +37,8 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
     var weatherList: Results<Weather>!
     var currentWeather: Results<Weather>!
     var timer: Timer?
+    var weatherView: UIView?
+    var weatherType: WeatherType?
     
     @IBOutlet weak var tempLabel: UILabel!
     @IBOutlet weak var timeLabel: UILabel!
@@ -44,7 +46,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
     @IBOutlet weak var temperatureLabel: UILabel!
     @IBOutlet weak var weatherTableView: UITableView!
     @IBOutlet weak var animatiomView: UIView!
-
+    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         setNeedsStatusBarAppearanceUpdate()
@@ -53,12 +55,41 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
         .lightContent
     }
     
+    @objc func setWeatherView() {
+        guard self.currentWeather.count > 0 &&  self.currentWeather[0].weatherType != self.weatherType else {
+            return
+        }
+        self.removeWeatherView()
+        self.removeWeatherView(target: 200)
+        var weatherView: UIView
+        self.weatherType = self.currentWeather[0].weatherType
+        
+        switch self.currentWeather[0].weatherType {
+        case WeatherType.ClearDay:
+            weatherView = SunnyWeather(frame: self.view.frame)
+        case WeatherType.ClearNight:
+            weatherView = MoonWeather(frame: self.view.frame)
+        default:
+            weatherView = Gradient(frame: self.view.frame)
+        }
+        weatherView.tag = 100
+        self.animatiomView.insertSubview(weatherView, aboveSubview: self.animatiomView)
+    }
+    
+    func removeWeatherView(target: Int = 100) {
+        if let viewWithTag = self.view.viewWithTag(target) {
+            viewWithTag.removeFromSuperview()
+        }else{
+            print("No!")
+        }
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
         let configuration = Realm.Configuration(schemaVersion: 5)
         self.realm = try! Realm(configuration: configuration)
-
+        
         let date: Date = Date()
         self.timeLabel.text = date.getFormattedDate(format: "d E, ha").uppercased()
         
@@ -100,6 +131,7 @@ class ViewController: UIViewController, CLLocationManagerDelegate {
             return
         }
         self.tempLabel.text = self.currentWeather[0].tempString
+        self.setWeatherView()
         self.view.setNeedsDisplay()
     }
     

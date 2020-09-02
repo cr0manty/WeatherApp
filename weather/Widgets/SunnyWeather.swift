@@ -59,7 +59,7 @@ class SunnyWeather: UIView {
         self.lastCircle.backgroundColor = self.lastCircleColor
         self.lastCircle.layer.cornerRadius = 80
         
-        self.lastCircle.layer.shadowOpacity = 0.8
+        self.lastCircle.layer.shadowOpacity = 1
         self.lastCircle.layer.shadowOffset = .zero
         self.lastCircle.layer.shadowRadius = 75
         self.lastCircle.layer.shadowColor = self.shadowColor.cgColor
