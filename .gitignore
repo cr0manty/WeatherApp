@@ -91,6 +91,7 @@ fastlane/test_output
 
 iOSInjectionProject/
 
+.idea/
 .idea/.gitignore
 .idea/inspectionProfiles/
 .idea/misc.xml
@@ -99,9 +100,7 @@ iOSInjectionProject/
 .idea/vcs.xml
 .idea/weather.iml
 .idea/xcode.xml
-Podfile
-Podfile.lock
-Pods/
+Pods
 weather.xcodeproj/xcshareddata/
 weather.xcworkspace/contents.xcworkspacedata
 weather.xcworkspace/xcshareddata/
